@@ -42,18 +42,18 @@ void prompt(void)
        and hostname. */
     if (user == NULL) {
         /* Print current working directory. */
-	    printf("%s$ ", working_directory);
+        printf("%s$ ", working_directory);
     } else if ((user != NULL) && (hostname == NULL)) {
         /* Print current working directory with username. */
-	    printf("%s:%s$ ", user, working_directory);
+        printf("%s:%s$ ", user, working_directory);
     } else {
         /* Print current working directory with user and hostname. */
-	    printf("%s@%s:%s$ ", user, hostname, working_directory);
+        printf("%s@%s:%s$ ", user, hostname, working_directory);
     }
 
-	/* Free allocated memory. */
-	free(working_directory);
-	working_directory = NULL;
+    /* Free allocated memory. */
+    free(working_directory);
+    working_directory = NULL;
 }
 
 /* get_working_directory
@@ -83,54 +83,54 @@ for reading the input string.
 */
 char* read_input(void)
 {
-	char* input = (char*) malloc(INITIAL_INPUT_LENGTH);
-	int position = 0;
-	int input_buffer_length = INITIAL_INPUT_LENGTH;
-	char current_char;
-	bool last_input_was_letter = false;
+    char* input = (char*) malloc(INITIAL_INPUT_LENGTH);
+    int position = 0;
+    int input_buffer_length = INITIAL_INPUT_LENGTH;
+    char current_char;
+    bool last_input_was_letter = false;
+
+    /* Return null pointer if the memory allocation failed. */
+    if (input == NULL) {
+        perror("Could not read input");
+        return NULL;
+    }
 	
-	/* Return null pointer if the memory allocation failed. */
-	if (input == NULL) {
-	    perror("Could not read input");
-	    return NULL;
-	}
-	
-	do {
-	    /* Get last pressed key. */
-	    current_char = getwc(stdin);
+    do {
+        /* Get last pressed key. */
+        current_char = getwc(stdin);
 
-	    /* Terminate the string if enter was pressed. */
-	    if (current_char == '\n') {
-	        input[position] = '\0';
-	    /* Add a space or tab only to the input string
-	       if a letter was entered before. */
-	    } else if (isblank(current_char)) {
-	        if (last_input_was_letter) {
-	            input[position] = current_char;
-	            position++;
-	            last_input_was_letter = false;
-	        }
-	    } else {
-	    /* Otherwise, add the character. */
-	        input[position] = current_char;
-	        position++;
-	        last_input_was_letter = true;
-	    }
+        /* Terminate the string if enter was pressed. */
+        if (current_char == '\n') {
+            input[position] = '\0';
+        /* Add a space or tab only to the input string
+           if a letter was entered before. */
+        } else if (isblank(current_char)) {
+            if (last_input_was_letter) {
+                input[position] = current_char;
+                position++;
+                last_input_was_letter = false;
+            }
+        } else {
+        /* Otherwise, add the character. */
+            input[position] = current_char;
+            position++;
+            last_input_was_letter = true;
+        }
 
-	    /* Increase input buffer if necessary. */
-	    if (position == input_buffer_length) {
-	        input_buffer_length *= 2;
-	        input = realloc(input, input_buffer_length);
+        /* Increase input buffer if necessary. */
+        if (position == input_buffer_length) {
+            input_buffer_length *= 2;
+            input = realloc(input, input_buffer_length);
 
-	        /* Return null pointer if reallocation failed. */
-	        if (input == NULL) {
-	            perror("Could not read input");
-	            return NULL;
-	        }
-	    }
-	} while (current_char != '\n');
+            /* Return null pointer if reallocation failed. */
+            if (input == NULL) {
+                perror("Could not read input");
+                return NULL;
+            }
+        }
+    } while (current_char != '\n');
 
-	return input;
+    return input;
 }
 
 
@@ -182,6 +182,6 @@ char** get_arguments_from_input(char* input)
         part = strtok(NULL, delimiter);
     } while (part != NULL);
     result[i] = NULL;
-    
+
     return result;
  }

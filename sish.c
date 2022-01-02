@@ -28,49 +28,49 @@ int main(void)
     int status;
     char** arguments;
 
-	while (TRUE)
-	{
+    while (TRUE)
+    {
 	    /* Ask for user input. */
-		prompt();
+        prompt();
 
-		/* Read user input. */
-		input = read_input();
+        /* Read user input. */
+        input = read_input();
 
-		/* Terminate program if we can not read the input. */
-		if (input == NULL) {
+        /* Terminate program if we can not read the input. */
+        if (input == NULL) {
             perror("Could not read input");
             exit(EXIT_FAILURE);
         }
 
-		/* Skip current iteration if the user only pressed enter. */
-		if (strlen(input) == 0) {
-		    free(input);
-		    input = NULL;
-		    continue;
-		}
+        /* Skip current iteration if the user only pressed enter. */
+        if (strlen(input) == 0) {
+            free(input);
+            input = NULL;
+            continue;
+        }
 
-		/* Terminate the program if the user requested so. */
-		if (strcmp(input, "exit") == 0) {
-		    free(input);
-		    input = NULL;
-		    exit(EXIT_SUCCESS);
-		}
+        /* Terminate the program if the user requested so. */
+        if (strcmp(input, "exit") == 0) {
+            free(input);
+            input = NULL;
+            exit(EXIT_SUCCESS);
+        }
 
-		/* Split the user input into an array containing the
-		   program name as first element and the command-line
-		   arguments (one element for each argument). */
-		arguments = get_arguments_from_input(input);
+        /* Split the user input into an array containing the
+           program name as first element and the command-line
+           arguments (one element for each argument). */
+        arguments = get_arguments_from_input(input);
 
-		/* Terminate the program if we can not split the input
-		   string into an array with the arguments. */
-		if (arguments == NULL) {
+        /* Terminate the program if we can not split the input
+           string into an array with the arguments. */
+        if (arguments == NULL) {
             perror("Could not evaluate input");
             exit(EXIT_FAILURE);
         }
 
         /* cd is not a regular program, so we have to implement
            out own variant as built-in command. */
-		if (strcmp(arguments[0], "cd") == 0) {
+        if (strcmp(arguments[0], "cd") == 0) {
             cd(arguments);
 
         /* If no built-in command was called, call fork to get
@@ -78,45 +78,45 @@ int main(void)
            then with exec if fork succeeded. */
         } else {
             /* Fork the process. */
-		    pid = fork();
+            pid = fork();
 
-		    /* Handle fork errors. */
-		    if (pid < 0)
-		    {
-			    perror("Can not fork");
-			    continue;
-		    }
+            /* Handle fork errors. */
+            if (pid < 0)
+            {
+                perror("Can not fork");
+                continue;
+            }
 
-		    /* Replace the process copy (child) using exec if
-		       forking succeeded. */
-		    if (pid == 0) {
+            /* Replace the process copy (child) using exec if
+               forking succeeded. */
+            if (pid == 0) {
                 exec(arguments);
 
                 /* Running exec failed if the code continues. */
                 puts("Starting the new process failed.");
                 _exit(EXIT_FAILURE);
-		    }
+            }
 
-		    /* Let the parent wait until the child process exited. */
-		    if (pid > 0) {
-			    status = 0;
-			    do {
-				    waitpid(pid, &status, WUNTRACED);
+            /* Let the parent wait until the child process exited. */
+            if (pid > 0) {
+                status = 0;
+                do {
+                    waitpid(pid, &status, WUNTRACED);
 #if DEBUG == 1
-				    if (status < 1) {
-				        perror("Parent process did not wait until child process exited");
-				    }
+                    if (status < 1) {
+                        perror("Parent process did not wait until child process exited");
+                    }
 #endif
-			    } while (
-			        !WIFEXITED(status) &&
-			        !WIFSIGNALED(status) &&
-			        !WIFSTOPPED(status));
-		    }
-		}
+                } while (
+                    !WIFEXITED(status) &&
+                    !WIFSIGNALED(status) &&
+                    !WIFSTOPPED(status));
+            }
+        }
 
-		/* Free allocated memory. */
-		free(input);
-		input = NULL;
-	}
+        /* Free allocated memory. */
+        free(input);
+        input = NULL;
+    }
 	return 0;
 }
