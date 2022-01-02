@@ -1,5 +1,4 @@
 objects = sish.o exec.o cd.o util.o
-executable = sish
 
 sish : $(objects)
 	cc -o sish $(objects)
