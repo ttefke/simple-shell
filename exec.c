@@ -25,7 +25,6 @@ void exec(char** command)
     /* Show error message if an error occured. */
     if (execution_result == -1) {
         fprintf(stderr, "Could not run %s: %s\n", command[0], strerror(errno));
-        printf("");
     }
 
     /* Free allocated memory. */
